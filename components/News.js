@@ -1,16 +1,20 @@
-import { Text, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet } from "react-native";
+import ButtonWrapper from "./ui/ButtonWrapper";
+import TextWrapper from "./ui/TextWrapper";
+import TextWrapperBold from "./ui/TextWrapperBold";
 
 const News = ({ news, navigate }) => {
-  // console.log(navigate);
   return (
-    <TouchableOpacity
+    <ButtonWrapper
       style={styles.newsWrapper}
       onPress={() => navigate("ChoosenNews", { news })}
       activeOpacity={0.8}
     >
-      <Text style={styles.title}>{news.title}</Text>
-      <Text style={styles.description}>{news.description.trim()}</Text>
-    </TouchableOpacity>
+      <TextWrapperBold style={styles.title}>{news.title}</TextWrapperBold>
+      <TextWrapper style={styles.description}>
+        {news.description ? news.description.trim() : "-"}
+      </TextWrapper>
+    </ButtonWrapper>
   );
 };
 

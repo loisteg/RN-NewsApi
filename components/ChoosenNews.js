@@ -1,35 +1,64 @@
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, Image, ScrollView, StyleSheet, Dimensions } from "react-native";
+import TextWrapper from "./ui/TextWrapper";
+import TextWrapperBold from "./ui/TextWrapperBold";
 
-const ChoosenNews = ({ route }) => {
+import ButtonWrapper from "./ui/ButtonWrapper";
+import { Ionicons } from "@expo/vector-icons";
+
+const ChoosenNews = ({ route, navigation: { goBack } }) => {
   const news = route.params.news;
   const date = () => {
-    const convertToDate = new Date(news.published);
-    return `${convertToDate.getDate()}.${
-      convertToDate.getMonth() + 1
-    }.${convertToDate.getFullYear()}`;
+    try {
+      const convertToDate = new Date(news.published);
+      return `${convertToDate.getDate()}.${
+        convertToDate.getMonth() + 1
+      }.${convertToDate.getFullYear()}`;
+    } catch {
+      return "-";
+    }
+  };
+
+  const checkEmptyString = (string) => {
+    return string ? string : "-";
   };
 
   return (
-    // Must be button back
     <View style={styles.container}>
-      <ScrollView style={styles.scrollWrapper}>
+      <View style={styles.back}>
+        <ButtonWrapper onPress={goBack}>
+          <Ionicons name="arrow-back" size={24} color="#000" />
+        </ButtonWrapper>
+      </View>
+      <ScrollView style={styles.scrollWrapper} removeClippedSubviews={true}>
         <Image source={{ uri: news.imageUrl }} style={styles.image} />
-        <Text style={styles.title}>{news.title}</Text>
-        <Text style={styles.description}>{news.description}</Text>
+        <TextWrapperBold style={styles.title}>
+          {checkEmptyString(news.title)}
+        </TextWrapperBold>
+        <TextWrapper style={styles.description}>
+          {checkEmptyString(news.description)}
+        </TextWrapper>
         <View style={styles.wrapper}>
-          <Text style={styles.source}>User ID: {news.source.id}</Text>
-          <Text style={styles.source}>{news.source.name}</Text>
+          <TextWrapper style={styles.source}>
+            User ID:{" "}
+            {checkEmptyString(news.source.id).length > 20
+              ? `${checkEmptyString(news.source.id).slice(0, 20)}...`
+              : checkEmptyString(news.source.id)}
+          </TextWrapper>
+          <TextWrapper style={styles.source}>
+            {checkEmptyString(news.source.name).length > 20
+              ? `${checkEmptyString(news.source.name).slice(0, 20)}...`
+              : checkEmptyString(news.source.name)}
+          </TextWrapper>
         </View>
         <View style={styles.wrapper}>
-          <Text style={styles.aboutNewsInfo}>{news.author}</Text>
-          <Text style={styles.aboutNewsInfo}>{date()}</Text>
+          <TextWrapper style={styles.aboutNewsInfo}>
+            {checkEmptyString(news.author).length > 20
+              ? `${checkEmptyString(news.author).slice(0, 20)}...`
+              : checkEmptyString(news.author)}
+          </TextWrapper>
+          <TextWrapper style={styles.aboutNewsInfo}>
+            {checkEmptyString(date())}
+          </TextWrapper>
         </View>
       </ScrollView>
     </View>
@@ -41,8 +70,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
     backgroundColor: "#fbfbf8",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+  },
+  back: {
+    marginBottom: 20,
+    width: "100%",
+    paddingHorizontal: 20,
+    justifyContent: "flex-start",
   },
   scrollWrapper: {
     flex: 1,
@@ -50,6 +85,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: Dimensions.get("window").height / 2,
+    width: "100%",
     borderRadius: 15,
   },
   title: {
